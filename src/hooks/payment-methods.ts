@@ -1,23 +1,30 @@
 import { useQuery } from '@tanstack/react-query'
 
-import apiBase from '../services/api-base'
-import apiUrl from '../constants/api-url'
 import queryKeys from '../constants/query-keys'
-import { PaymentMethodResponse } from '../types/payment-methods'
-import { toPaymentMethod } from '../adapters/payment-methods'
-
-async function fetchPaymentMethods() {
-	const { data } = await apiBase.get<PaymentMethodResponse[]>(
-		apiUrl.PAYMENT_METHODS
-	)
-	console.log({ data })
-	const paymentMethods = data.map(toPaymentMethod)
-	return paymentMethods
-}
+import { PaymentMethod } from '../types/payment-methods'
+import {
+	fetchPaymentMethodById,
+	fetchPaymentMethods,
+	fetchPaymentMethodsById,
+} from '../services/payment-methods'
 
 export function useFetchPaymentMethods() {
 	return useQuery({
 		queryKey: [queryKeys.PAYMENT_METHODS],
-		queryFn: fetchPaymentMethods,
+		queryFn: () => fetchPaymentMethods(),
+	})
+}
+
+export function useFetchPaymentMethodById(id: PaymentMethod['id']) {
+	return useQuery({
+		queryKey: [queryKeys.PAYMENT_METHODS, id],
+		queryFn: () => fetchPaymentMethodById(id),
+	})
+}
+
+export function useFetchPaymentMethodsById(ids: PaymentMethod['id'][]) {
+	return useQuery({
+		queryKey: [queryKeys.PAYMENT_METHODS, ids],
+		queryFn: () => fetchPaymentMethodsById(ids),
 	})
 }
