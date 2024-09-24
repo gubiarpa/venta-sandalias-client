@@ -29,7 +29,7 @@ td.shorten-string {
 		transform: scale(1); /* Tamaño inicial */
 	}
 	50% {
-		transform: scale(1.5); /* Crece un 10% */
+		transform: scale(1.2); /* Crece un 10% */
 	}
 	100% {
 		transform: scale(1); /* Vuelve al tamaño original */

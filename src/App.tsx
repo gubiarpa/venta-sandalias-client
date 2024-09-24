@@ -1,27 +1,21 @@
+import Modal from './components/Modal'
 import Navbar from './components/Navbar'
-import Test from './components/Test'
 
-/// <testing>
-import { useState } from 'react'
-/// </testing>
+export interface ToastDisplay {
+	title: string
+	message: string
+}
 
 function App() {
-	/// <testing>
-	const [show, setShow] = useState(false)
-	/// </testing>
-
 	return (
 		<>
 			<Navbar />
-			{/* <testing> */}
-			<button
-				className='btn btn-outline-primary my-3 ms-3'
-				onClick={() => setShow(!show)}
+			<Modal
+				title='Nueva venta'
+				className='m-3'
 			>
-				{show ? 'Hide' : 'Show'}
-			</button>
-			{show && <Test />}
-			{/* </testing> */}
+				<p>Nueva venta</p>
+			</Modal>
 		</>
 	)
 }

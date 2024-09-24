@@ -3,14 +3,17 @@ import Container from 'react-bootstrap/Container'
 import Form from 'react-bootstrap/Form'
 import Nav from 'react-bootstrap/Nav'
 import NavbarBs from 'react-bootstrap/Navbar'
-import { IoHeartSharp } from 'react-icons/io5'
-import { RiLogoutCircleRLine } from 'react-icons/ri'
+import { IoBagHandleOutline, IoLogOutOutline } from 'react-icons/io5'
 
-function Navbar() {
+interface Props {
+	className?: string
+}
+
+function Navbar({ className }: Props) {
 	return (
 		<NavbarBs
 			expand='lg'
-			className='bg-body-tertiary'
+			className={`bg-body-tertiary ${className}`}
 			bg='dark'
 			data-bs-theme='dark'
 			sticky='top'
@@ -20,7 +23,7 @@ function Navbar() {
 					href='/'
 					className='mb-1 me-4'
 				>
-					<IoHeartSharp className='beating me-3 mb-1' />
+					<IoBagHandleOutline className='beating me-3 mb-1' />
 					Control de Ventas
 				</NavbarBs.Brand>
 				<NavbarBs.Toggle aria-controls='navbarScroll' />
@@ -33,7 +36,7 @@ function Navbar() {
 					</Nav>
 					<Form>
 						<Button variant='outline-danger'>
-							<RiLogoutCircleRLine className='me-2 mb-1' />
+							<IoLogOutOutline className='me-2 mb-1' />
 							Salir
 						</Button>
 					</Form>
