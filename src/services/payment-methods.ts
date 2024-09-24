@@ -1,28 +1,33 @@
-import apiBase from './base/api-base'
+import apiBase from '../services/base/api-base'
 import apiUrl from '../constants/api-url'
 
 import { toPaymentMethod } from '../adapters/payment-methods'
-import { PaymentMethod, PaymentMethodResponse } from '../types/payment-methods'
+import {
+	PaymentMethodRequest,
+	PaymentMethodResponse,
+} from '../types/payment-methods'
 
-export async function fetchPaymentMethods() {
+export async function getPaymentMethods() {
 	const url = apiUrl.PAYMENT_METHODS
 	const { data } = await apiBase.get<PaymentMethodResponse[]>(url)
-	const paymentMethods = data.map(toPaymentMethod)
+	const paymentMethods = data.map((_) => toPaymentMethod(_))
 	return paymentMethods
 }
 
-export async function fetchPaymentMethodById(id: PaymentMethod['id']) {
+export async function getPaymentMethodById(id: PaymentMethodRequest['_id']) {
 	const url = `${apiUrl.PAYMENT_METHODS}/${id}`
 	const { data } = await apiBase.get<PaymentMethodResponse>(url)
 	return toPaymentMethod(data)
 }
 
-export async function fetchPaymentMethodsById(ids: PaymentMethod['id'][]) {
+export async function getPaymentMethodsById(
+	ids: PaymentMethodRequest['_id'][]
+) {
 	const urls = ids.map((id) => `${apiUrl.PAYMENT_METHODS}/${id}`)
 	const fetchPromises = urls.map((url) =>
 		apiBase.get<PaymentMethodResponse>(url)
 	)
 	const responses = await Promise.all(fetchPromises)
 	const data = await Promise.all(responses.map((response) => response.data))
-	return data.map(toPaymentMethod)
+	return data.map((_) => toPaymentMethod(_))
 }
