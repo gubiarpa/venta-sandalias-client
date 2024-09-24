@@ -35,7 +35,11 @@ export const useModalParametersStore = create<ModalParametersState>((set) => ({
 			},
 		}))
 	},
-	setAmount: (value: number) => {
+	setAmount: (value?: number) => {
+		if (!value) {
+			return
+		}
+
 		set((state) => ({
 			state: {
 				...state.state,

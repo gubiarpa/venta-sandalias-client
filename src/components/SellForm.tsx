@@ -14,7 +14,6 @@ function SellForm({ products, paymentMethods }: Props) {
 		state: sellForm,
 		decreaseQuantity,
 		increaseQuantity,
-		setAmount,
 	} = useModalParametersStore()
 
 	const defaultProductId = useId()
@@ -33,7 +32,7 @@ function SellForm({ products, paymentMethods }: Props) {
 			return
 		}
 
-    // Format the amount to two decimal places
+		// Format the amount to two decimal places
 		amountInputRef.current.value = parseFloat(
 			amountInputRef.current.value ?? '0'
 		).toFixed(2)
