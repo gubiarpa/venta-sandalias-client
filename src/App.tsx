@@ -1,5 +1,9 @@
 import Modal from './components/Modal'
 import Navbar from './components/Navbar'
+import Loader from './components/Loader'
+import Table from './components/Table'
+
+import { useFetchSells } from './hooks/sells'
 
 export interface ToastDisplay {
 	title: string
@@ -7,6 +11,8 @@ export interface ToastDisplay {
 }
 
 function App() {
+	const { data: sells, isLoading: isLoadingSells } = useFetchSells()
+
 	return (
 		<>
 			<Navbar />
@@ -16,6 +22,7 @@ function App() {
 			>
 				<p>Nueva venta</p>
 			</Modal>
+			{isLoadingSells ? <Loader /> : <Table sells={sells!} />}
 		</>
 	)
 }

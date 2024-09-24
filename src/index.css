@@ -5,15 +5,15 @@ body {
 }
 
 .rotating {
-	animation: rotateLeftRight 1s infinite alternate ease-in-out;
+	animation: rotateLeftRight 2s infinite alternate ease-in-out;
 }
 
 @keyframes rotateLeftRight {
 	0% {
-		transform: rotate(-15deg); /* Rotar 20 grados a la izquierda */
+		transform: rotate(0deg); /* Rotar 20 grados a la izquierda */
 	}
 	100% {
-		transform: rotate(15deg); /* Rotar 20 grados a la derecha */
+		transform: rotate(270deg); /* Rotar 20 grados a la derecha */
 	}
 }
 
@@ -39,4 +39,11 @@ td.shorten-string {
 .beating {
 	animation: grow-shrink 2s infinite; /* Aplica la animación cada 2 segundos de manera infinita */
 	transform-origin: center; /* Asegura que el crecimiento ocurra desde el centro del ícono */
+}
+
+.text-loading {
+	font-family: "Caveat", cursive;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
 }
