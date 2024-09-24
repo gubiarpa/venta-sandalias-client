@@ -8,12 +8,13 @@ import {
 } from 'react-icons/io5'
 
 interface Props {
+	isLoading: boolean
 	title: string
 	className?: string
 	children: ReactNode
 }
 
-function Modal({ title, className, children }: Props) {
+function Modal({ isLoading, title, className, children }: Props) {
 	const [show, setShow] = useState(false)
 
 	const handleClose = () => {
@@ -32,7 +33,8 @@ function Modal({ title, className, children }: Props) {
 		<div className={className}>
 			{/* Button */}
 			<Button
-				variant='outline-success'
+				disabled={isLoading}
+				variant={isLoading ? 'outline-secondary' : 'outline-success'}
 				onClick={handleShow}
 			>
 				<IoBagAddOutline className='me-2 mb-1' />
@@ -49,7 +51,7 @@ function Modal({ title, className, children }: Props) {
 			>
 				<ModalBs.Header closeButton>
 					<ModalBs.Title>
-						<IoCartSharp className='me-2 mb-1 rotating' /> {title}
+						<IoCartSharp className='me-2 mb-1 beating' /> {title}
 					</ModalBs.Title>
 				</ModalBs.Header>
 				<ModalBs.Body>{children}</ModalBs.Body>

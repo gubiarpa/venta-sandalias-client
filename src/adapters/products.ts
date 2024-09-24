@@ -4,5 +4,6 @@ export function toProduct(product: ProductResponse): Product {
 	return {
 		id: product._id,
 		name: product.name,
+		price: product.price,
 	}
 }
