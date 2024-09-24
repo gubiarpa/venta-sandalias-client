@@ -11,6 +11,7 @@ interface ModalParametersState {
 	state: ModalParameters
 	decreaseQuantity: (value?: number) => void
 	increaseQuantity: (value?: number) => void
+	setAmount: (value?: number) => void
 }
 
 export const useModalParametersStore = create<ModalParametersState>((set) => ({
@@ -31,6 +32,14 @@ export const useModalParametersStore = create<ModalParametersState>((set) => ({
 			state: {
 				...state.state,
 				quantity: state.state.quantity + value,
+			},
+		}))
+	},
+	setAmount: (value: number) => {
+		set((state) => ({
+			state: {
+				...state.state,
+				amount: value,
 			},
 		}))
 	},
