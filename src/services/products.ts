@@ -16,11 +16,3 @@ export async function getProductById(id: ProductRequest['_id']) {
 	const { data } = await apiBase.get<ProductResponse>(url)
 	return toProduct(data)
 }
-
-export async function getProductsById(ids: ProductRequest['_id'][]) {
-	const urls = ids.map((id) => `${apiUrl.PRODUCTS}/${id}`)
-	const fetchPromises = urls.map((url) => apiBase.get<ProductResponse>(url))
-	const responses = await Promise.all(fetchPromises)
-	const data = await Promise.all(responses.map((response) => response.data))
-	return data.map(toProduct)
-}

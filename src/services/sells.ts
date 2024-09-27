@@ -1,10 +1,77 @@
 import apiBase from '../services/base/api-base'
 import apiUrl from '../constants/api-url'
 
-import { SellResponse } from '../types/sell'
-import { getProductsById } from './products'
-import { getPaymentMethodsById } from './payment-methods'
+import { Sell, SellResponse } from '../types/sell'
 import { toSell } from '../adapters/sells'
+import { Product } from '../types/products'
+import { PaymentMethod } from '../types/payment-methods'
+import { getProductById } from './products'
+import { getPaymentMethodById } from './payment-methods'
+
+interface SellMapper {
+	products: Product[]
+	paymentMethods: PaymentMethod[]
+}
+
+async function getAndMapProductsById(
+	sellsResponse: Pick<SellResponse, 'productId'>[]
+): Promise<Product[]> {
+	const productIdsWithDuplicates = sellsResponse.map(
+		({ productId }) => productId
+	)
+	const productsIds = [...new Set(productIdsWithDuplicates)]
+	return await Promise.all(
+		productsIds.map(async (id) => await getProductById(id))
+	)
+}
+
+async function getAndMapPaymentMethodsById(
+	sellsResponse: Pick<SellResponse, 'paymentMethodId'>[]
+): Promise<PaymentMethod[]> {
+	const paymentMethodIdsWithDuplicates = sellsResponse.map(
+		({ paymentMethodId }) => paymentMethodId
+	)
+	const paymentMethodsIds = [...new Set(paymentMethodIdsWithDuplicates)]
+	return await Promise.all(
+		paymentMethodsIds.map(async (id) => await getPaymentMethodById(id))
+	)
+}
+
+function mapSellsWithExternalEntities({
+	sellResponse,
+	sellMapper,
+}: {
+	sellResponse: SellResponse
+	sellMapper: SellMapper
+}): Sell {
+	const { products, paymentMethods } = sellMapper
+
+	const product = products.find(
+		(product) => product.id === sellResponse.productId
+	)!
+	const paymentMethod = paymentMethods.find(
+		(paymentMethod) => paymentMethod.id === sellResponse.paymentMethodId
+	)!
+
+	return toSell({ sell: sellResponse, product, paymentMethod })
+}
+
+export async function getSellsWithExternalEntities({
+	products,
+	paymentMethods,
+}: SellMapper) {
+	/// Get Sells
+	const url = apiUrl.SELLS
+	const sellsResponse = (await apiBase.get<SellResponse[]>(url)).data
+
+	/// Map Sells
+	return sellsResponse.map((sellResponse) =>
+		mapSellsWithExternalEntities({
+			sellResponse,
+			sellMapper: { products, paymentMethods },
+		})
+	)
+}
 
 export async function getSells() {
 	/// Get Sells
@@ -12,25 +79,16 @@ export async function getSells() {
 	const sellsResponse = (await apiBase.get<SellResponse[]>(url)).data
 
 	/// Get Products and Payment Methods
-	const productsIds = sellsResponse.map((sell) => sell.productId)
-	const paymentMethodsIds = sellsResponse.map((sell) => sell.paymentMethodId)
-	const productIdsWihtoutDuplicates = [...new Set(productsIds)]
-	const paymentMethodsIdsWithoutDuplicates = [...new Set(paymentMethodsIds)]
-
 	const [products, paymentMethods] = await Promise.all([
-		getProductsById(productIdsWihtoutDuplicates),
-		getPaymentMethodsById(paymentMethodsIdsWithoutDuplicates),
+		getAndMapProductsById(sellsResponse),
+		getAndMapPaymentMethodsById(sellsResponse),
 	])
 
 	/// Map Sells
-	return sellsResponse.map((sellResponse) => {
-		const product = products.find(
-			(product) => product.id === sellResponse.productId
-		)!
-		const paymentMethod = paymentMethods.find(
-			(paymentMethod) => paymentMethod.id === sellResponse.paymentMethodId
-		)!
-
-		return toSell({ sell: sellResponse, product, paymentMethod })
-	})
+	return sellsResponse.map((sellResponse) =>
+		mapSellsWithExternalEntities({
+			sellResponse,
+			sellMapper: { products, paymentMethods },
+		})
+	)
 }

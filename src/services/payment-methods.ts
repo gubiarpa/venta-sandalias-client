@@ -19,15 +19,3 @@ export async function getPaymentMethodById(id: PaymentMethodRequest['_id']) {
 	const { data } = await apiBase.get<PaymentMethodResponse>(url)
 	return toPaymentMethod(data)
 }
-
-export async function getPaymentMethodsById(
-	ids: PaymentMethodRequest['_id'][]
-) {
-	const urls = ids.map((id) => `${apiUrl.PAYMENT_METHODS}/${id}`)
-	const fetchPromises = urls.map((url) =>
-		apiBase.get<PaymentMethodResponse>(url)
-	)
-	const responses = await Promise.all(fetchPromises)
-	const data = await Promise.all(responses.map((response) => response.data))
-	return data.map((_) => toPaymentMethod(_))
-}

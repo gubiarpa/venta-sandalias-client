@@ -1,18 +1,17 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQueries, useQuery } from '@tanstack/react-query'
 
 import queryKeys from '../constants/query-keys'
 import { PaymentMethod } from '../types/payment-methods'
 import {
 	getPaymentMethodById,
 	getPaymentMethods,
-	getPaymentMethodsById,
 } from '../services/payment-methods'
 
 const paymentMethodsStaleTime = parseInt(
 	import.meta.env.VITE_PAYMENT_METHODS_STALE_TIME ?? '10000'
 )
 
-export function useFetchPaymentMethods() {
+export function usePaymentMethods() {
 	return useQuery({
 		queryKey: [queryKeys.PAYMENT_METHODS],
 		queryFn: () => getPaymentMethods(),
@@ -20,24 +19,28 @@ export function useFetchPaymentMethods() {
 	})
 }
 
-export function useFetchPaymentMethodById(
-	paymentMethod: Pick<PaymentMethod, 'id'>
+export function usePaymentMethodById(
+	paymentMethod: Pick<PaymentMethod, 'id'> | undefined
 ) {
-	const { id } = paymentMethod
+	const { id } = paymentMethod!
 	return useQuery({
-		queryKey: [queryKeys.PAYMENT_METHODS, id],
+		queryKey: [queryKeys.PAYMENT_METHODS, { id }],
 		queryFn: () => getPaymentMethodById(id),
 		staleTime: paymentMethodsStaleTime,
 	})
 }
 
-export function useFetchPaymentMethodsById(
-	paymentMethods: Pick<PaymentMethod, 'id'>[]
+export function usePaymentMethodsById(
+	paymentMethods: (Pick<PaymentMethod, 'id'> | undefined)[] | undefined
 ) {
-	const ids = paymentMethods.map(({ id }) => id)
-	return useQuery({
-		queryKey: [queryKeys.PAYMENT_METHODS, ids],
-		queryFn: () => getPaymentMethodsById(ids),
-		staleTime: paymentMethodsStaleTime,
+	const ids = (paymentMethods ?? []).map((_) => _?.id)
+	return useQueries({
+		queries: (ids ?? []).map((id) => {
+			return {
+				queryKey: [queryKeys.PAYMENT_METHODS, { id }],
+				queryFn: () => getPaymentMethodById(id!),
+				staleTime: paymentMethodsStaleTime,
+			}
+		}),
 	})
 }

@@ -8,6 +8,7 @@ const apiBase = axios.create({
 		'Content-Type': 'application/json',
 		Accept: 'application/json',
 	},
+	timeout: parseInt(import.meta.env.VITE_TIMEOUT ?? '10000'),
 })
 
 export default apiBase
