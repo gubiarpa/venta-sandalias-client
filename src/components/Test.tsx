@@ -1,7 +1,7 @@
-import { useFetchSells } from '../hooks/sells'
+import { useSells } from '../hooks/sells'
 
 function Test() {
-	const { data: sells, isLoading } = useFetchSells()
+	const { data: sells, isLoading } = useSells()
 
 	if (isLoading) return <p>Cargando...</p>
 
