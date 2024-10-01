@@ -16,10 +16,10 @@ interface Props {
 
 function Modal({ title, className, children }: Props) {
 	const [show, setShow] = useState(false)
-	const { clear } = useModalParametersStore()
+	const { reset } = useModalParametersStore()
 
 	const handleClose = () => {
-		clear()
+		reset()
 		setShow(false)
 	}
 

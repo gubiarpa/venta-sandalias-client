@@ -13,7 +13,7 @@ interface ModalParametersState {
 	decreaseQuantity: (value?: number) => void
 	increaseQuantity: (value?: number) => void
 	setAmount: (value?: number) => void
-	clear: () => void
+	reset: () => void
 }
 
 export const useModalParametersStore = create<ModalParametersState>((set) => ({
@@ -57,7 +57,7 @@ export const useModalParametersStore = create<ModalParametersState>((set) => ({
 			},
 		}))
 	},
-	clear: () => {
+	reset: () => {
 		set(() => ({
 			state: {
 				quantity: 1,
