@@ -6,6 +6,7 @@ import {
 	IoCartSharp,
 	IoCheckmarkSharp,
 } from 'react-icons/io5'
+import { useModalParametersStore } from '../store/modal-parameters'
 
 interface Props {
 	title: string
@@ -15,8 +16,10 @@ interface Props {
 
 function Modal({ title, className, children }: Props) {
 	const [show, setShow] = useState(false)
+	const { clear } = useModalParametersStore()
 
 	const handleClose = () => {
+		clear()
 		setShow(false)
 	}
 

@@ -1,4 +1,4 @@
-import { useEffect, useId, useRef } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { Button, Form, InputGroup } from 'react-bootstrap'
 import { PaymentMethod } from '../types/payment-methods'
 import { Product } from '../types/products'
@@ -12,6 +12,7 @@ interface Props {
 function SellForm({ products, paymentMethods }: Props) {
 	const {
 		state: sellForm,
+		setProductId,
 		decreaseQuantity,
 		increaseQuantity,
 	} = useModalParametersStore()
@@ -27,6 +28,7 @@ function SellForm({ products, paymentMethods }: Props) {
 		}
 	}, [])
 
+	/// Handlers
 	const handleAmountBlur = () => {
 		if (!amountInputRef.current) {
 			return
@@ -38,6 +40,22 @@ function SellForm({ products, paymentMethods }: Props) {
 		).toFixed(2)
 	}
 
+	const handleProductChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		setProductId(e.target.value)
+	}
+
+	/// Utils (if needed, replace with useCallback)
+	const isProductIdUndefined = sellForm.productId === undefined
+
+	const decreaseQuantityButtonDisabled =
+		sellForm.quantity <= 1 || isProductIdUndefined
+
+	const increaseQuantityButtonDisabled = isProductIdUndefined
+
+	/// Testing
+	const [testing] = useState(true)
+
+	/// Render
 	return (
 		<Form>
 			{/* Product */}
@@ -49,6 +67,7 @@ function SellForm({ products, paymentMethods }: Props) {
 				<Form.Select
 					aria-label='Default select example'
 					defaultValue={defaultProductId}
+					onChange={handleProductChange}
 				>
 					<option
 						disabled
@@ -67,7 +86,7 @@ function SellForm({ products, paymentMethods }: Props) {
 				</Form.Select>
 			</Form.Group>
 
-			{/* Cantidad */}
+			{/* Quantity */}
 			<Form.Group
 				className='mb-3'
 				controlId='sellFormQuantity'
@@ -76,9 +95,11 @@ function SellForm({ products, paymentMethods }: Props) {
 				<InputGroup className='mb-3'>
 					<Button
 						variant={`${
-							sellForm.quantity <= 1 ? 'outline-secondary' : 'outline-danger'
+							decreaseQuantityButtonDisabled
+								? 'outline-secondary'
+								: 'outline-danger'
 						}`}
-						disabled={sellForm.quantity <= 1}
+						disabled={decreaseQuantityButtonDisabled}
 						onClick={() => {
 							decreaseQuantity()
 						}}
@@ -90,9 +111,15 @@ function SellForm({ products, paymentMethods }: Props) {
 						className='text-center text-secondary'
 						value={sellForm.quantity}
 						readOnly
+						disabled={isProductIdUndefined}
 					></Form.Control>
 					<Button
-						variant='outline-success'
+						variant={`${
+							increaseQuantityButtonDisabled
+								? 'outline-secondary'
+								: 'outline-success'
+						}`}
+						disabled={increaseQuantityButtonDisabled}
 						onClick={() => {
 							increaseQuantity()
 						}}
@@ -141,6 +168,20 @@ function SellForm({ products, paymentMethods }: Props) {
 					))}
 				</Form.Select>
 			</Form.Group>
+
+			{/* Tracking Form State */}
+			{testing && (
+				<pre>
+					{JSON.stringify(
+						{
+							productIdIsUndefined: sellForm.productId === undefined,
+							sellForm,
+						},
+						null,
+						2
+					)}
+				</pre>
+			)}
 		</Form>
 	)
 }
