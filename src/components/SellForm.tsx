@@ -3,6 +3,8 @@ import { Button, Form, InputGroup } from 'react-bootstrap'
 import { PaymentMethod } from '../types/payment-methods'
 import { Product } from '../types/products'
 import { useModalParametersStore } from '../store/modal-parameters'
+import { formatNumber } from '../utils/number'
+import Tracking from './Tracking'
 
 interface Props {
 	products: Product[]
@@ -21,12 +23,20 @@ function SellForm({ products, paymentMethods }: Props) {
 
 	const amountInputRef = useRef<HTMLInputElement>(null)
 
-	// Loads the amount input with the current amount (default value)
+	const [selectedProduct, setSelectedProduct] = useState<Product | undefined>()
 	useEffect(() => {
-		if (amountInputRef.current) {
-			amountInputRef.current.value = sellForm.amount.toFixed(2)
+		if (!sellForm.productId) {
+			return setSelectedProduct(undefined)
 		}
-	}, [])
+
+		const foundProduct = products.find(({ id }) => id === sellForm.productId)
+
+		if (!foundProduct) {
+			return setSelectedProduct(undefined)
+		}
+
+		setSelectedProduct(foundProduct)
+	}, [sellForm.productId])
 
 	/// Handlers
 	const handleAmountBlur = () => {
@@ -53,7 +63,7 @@ function SellForm({ products, paymentMethods }: Props) {
 	const increaseQuantityButtonDisabled = isProductIdUndefined
 
 	/// Testing
-	const [testing] = useState(true)
+	const [testing] = useState(false)
 
 	/// Render
 	return (
@@ -131,20 +141,29 @@ function SellForm({ products, paymentMethods }: Props) {
 
 			{/* Amount */}
 			<Form.Group
-				className='mb-3'
+				className={`mb-md-3 ${isProductIdUndefined ? 'mb-3' : 'mb-1'}`}
 				controlId='formBasicPassword'
 			>
 				<Form.Label className='mt-3'>Monto Total</Form.Label>
-				<InputGroup className='mb-3'>
+				<InputGroup className='mb-1'>
 					<InputGroup.Text>S/</InputGroup.Text>
 					<Form.Control
-						style={{ textAlign: 'right' }}
 						type='tel'
+						ref={amountInputRef}
+						className='text-end'
+						disabled={isProductIdUndefined}
 						onClick={() => amountInputRef.current?.select()}
 						onBlur={handleAmountBlur}
-						ref={amountInputRef}
 					/>
 				</InputGroup>
+				{!isProductIdUndefined && (
+					<div className={'text-end'}>
+						<small className={'text-muted me-3'}>
+							{selectedProduct?.price} x {sellForm.quantity} = S/{' '}
+							{formatNumber(sellForm.quantity * selectedProduct?.price!)}
+						</small>
+					</div>
+				)}
 			</Form.Group>
 
 			{/* Payment Method */}
@@ -155,7 +174,7 @@ function SellForm({ products, paymentMethods }: Props) {
 				<Form.Label className='mt-3'>Método de Pago</Form.Label>
 				<Form.Select
 					aria-label='Default select example'
-					// defaultValue={defaultPaymentMethodId}
+					disabled={isProductIdUndefined}
 					defaultValue={paymentMethods && paymentMethods[0].id}
 				>
 					{paymentMethods.map(({ id, name }) => (
@@ -171,16 +190,12 @@ function SellForm({ products, paymentMethods }: Props) {
 
 			{/* Tracking Form State */}
 			{testing && (
-				<pre>
-					{JSON.stringify(
-						{
-							productIdIsUndefined: sellForm.productId === undefined,
-							sellForm,
-						},
-						null,
-						2
-					)}
-				</pre>
+				<Tracking
+					obj={{
+						productIdIsUndefined: sellForm.productId === undefined,
+						sellForm,
+					}}
+				/>
 			)}
 		</Form>
 	)
