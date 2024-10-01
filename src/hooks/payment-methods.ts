@@ -31,7 +31,7 @@ export function usePaymentMethodById(
 }
 
 export function usePaymentMethodsById(
-	paymentMethods: (Pick<PaymentMethod, 'id'> | undefined)[] | undefined
+	paymentMethods?: (Pick<PaymentMethod, 'id'> | undefined)[]
 ) {
 	const ids = (paymentMethods ?? []).map((_) => _?.id)
 	return useQueries({

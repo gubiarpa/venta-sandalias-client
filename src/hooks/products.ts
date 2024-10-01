@@ -26,7 +26,7 @@ export function useProductById(product: Pick<Product, 'id'> | undefined) {
 }
 
 export function useProductsById(
-	products: (Pick<Product, 'id'> | undefined)[] | undefined
+	products?: (Pick<Product, 'id'> | undefined)[]
 ) {
 	const ids = (products ?? []).map((_) => _?.id)
 	return useQueries({

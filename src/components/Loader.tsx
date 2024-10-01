@@ -13,7 +13,7 @@ function Loader({ className }: Props) {
 				className='my-5 rotating'
 				size={100}
 			/>
-			<span className='fs-1 text-loading beating'>Loading...</span>
+			<span className='fs-1 text-loading beating'>Cargando...</span>
 		</div>
 	)
 }

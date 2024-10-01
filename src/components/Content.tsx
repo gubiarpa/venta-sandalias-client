@@ -6,6 +6,7 @@ import { useProducts } from '../hooks/products'
 import { useSells } from '../hooks/sells'
 import Table from './Table'
 import Loader from './Loader'
+import Error from './Error'
 
 function Content() {
 	const productsQuery = useProducts()
@@ -20,7 +21,11 @@ function Content() {
 		productsQuery.isLoading ||
 		paymentMethodsQuery.isLoading
 
+	const isError =
+		sellsQuery.isError || productsQuery.isError || paymentMethodsQuery.isError
+
 	if (isLoading) return <Loader />
+	if (isError) return <Error />
 
 	return (
 		<>
