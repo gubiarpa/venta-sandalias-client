@@ -10,4 +10,5 @@ interface ImportMetaEnv {
 
 	readonly VITE_TRACKING_SHOW: 'ENABLE' | 'DISABLE'
 	readonly VITE_TRACKING_INTTERMITENT: 'ENABLE' | 'DISABLE'
+	readonly VITE_TRACKING_CYCLE: number
 }

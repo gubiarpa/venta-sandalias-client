@@ -5,7 +5,9 @@ interface Props {
 }
 
 function Tracking({ obj }: Props) {
-	const [show, setShow] = useState<boolean>(false)
+	const [show, setShow] = useState<boolean>(
+		() => import.meta.env.VITE_TRACKING_SHOW === 'ENABLE'
+	)
 
 	useEffect(() => {
 		if (import.meta.env.VITE_TRACKING_INTTERMITENT === 'DISABLE') {
@@ -14,7 +16,7 @@ function Tracking({ obj }: Props) {
 
 		const eventId = setInterval(() => {
 			setShow((prevState) => !prevState)
-		}, 5000)
+		}, import.meta.env.VITE_TRACKING_CYCLE)
 
 		return () => {
 			clearInterval(eventId)
