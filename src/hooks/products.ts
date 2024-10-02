@@ -4,9 +4,7 @@ import queryKeys from '../constants/query-keys'
 import { getProductById, getProducts } from '../services/products'
 import { Product } from '../types/products'
 
-const productsStaleTime = parseInt(
-	import.meta.env.VITE_PRODUCTS_STALE_TIME ?? '10000'
-)
+const productsStaleTime = import.meta.env.VITE_PRODUCTS_STALE_TIME
 
 export function useProducts() {
 	return useQuery({

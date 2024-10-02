@@ -1,8 +1,9 @@
-import { useState } from 'react'
+import { useId } from 'react'
 import { Button, Form, InputGroup } from 'react-bootstrap'
+
 import { PaymentMethod } from '../types/payment-methods'
 import { Product } from '../types/products'
-import Tracking from './Tracking'
+import { useModalParametersStore } from '../store/modal-parameters'
 
 interface Props {
 	products: Product[]
@@ -10,8 +11,17 @@ interface Props {
 }
 
 function SellForm({ products, paymentMethods }: Props) {
-	/// Testing
-	const [testing] = useState(false)
+	/// Store
+	const { setProductId } = useModalParametersStore()
+
+	/// State
+	const defaultProductId = useId()
+
+	/// Handlers
+	const handleProductChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		const productId = e.target.value
+		setProductId(productId)
+	}
 
 	/// Render
 	return (
@@ -22,8 +32,17 @@ function SellForm({ products, paymentMethods }: Props) {
 				controlId='formBasicPassword'
 			>
 				<Form.Label className='mt-2'>Producto</Form.Label>
-				<Form.Select aria-label='Default select example'>
-					<option disabled>Seleccione un producto</option>
+				<Form.Select
+					defaultValue={defaultProductId}
+					onChange={handleProductChange}
+					aria-label='Default select example'
+				>
+					<option
+						value={defaultProductId}
+						disabled
+					>
+						Seleccione un producto
+					</option>
 					{products.map(({ id, name, price }) => (
 						<option
 							key={id}
@@ -87,15 +106,6 @@ function SellForm({ products, paymentMethods }: Props) {
 					))}
 				</Form.Select>
 			</Form.Group>
-
-			{/* Tracking Form State */}
-			{testing && (
-				<Tracking
-					obj={{
-						gubiarpa: true,
-					}}
-				/>
-			)}
 		</Form>
 	)
 }
