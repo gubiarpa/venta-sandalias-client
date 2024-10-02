@@ -111,7 +111,7 @@ function SellForm({ products, paymentMethods }: Props) {
 			</Form.Group>
 
 			{/* 🍎 Amount */}
-			<Form.Group>
+			<Form.Group className={`mb-md-3 ${isProductIdUndefined ? 'mb-3' : 'mb-1'}`}>
 				<Form.Label className='mt-3'>Monto Total</Form.Label>
 				<InputGroup className='mb-1'>
 					<InputGroup.Text>S/</InputGroup.Text>
@@ -120,12 +120,11 @@ function SellForm({ products, paymentMethods }: Props) {
 						className='text-end'
 					/>
 				</InputGroup>
-				<div className={'text-end'}>
-					<small className={'text-muted me-3'}>
-						{/* {selectedProduct?.price} x {sellForm.quantity} = S/{' '}
-						{formatNumber(sellForm.quantity * selectedProduct?.price!)} */}
-					</small>
-				</div>
+				{!isProductIdUndefined && (
+					<div className={'text-end'}>
+						<small className={'text-muted me-3'}></small>
+					</div>
+				)}
 			</Form.Group>
 
 			{/* 🍎 Payment Method */}
