@@ -23,11 +23,6 @@ function SellForm({ products, paymentMethods }: Props) {
 	/// State
 	const defaultProductId = useId()
 
-	/// Effects
-	useEffect(() => {
-		paymentMethods && setPaymentMethodId(paymentMethods[0].id)
-	}, [])
-
 	/// Handlers
 	const handleProductChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		const productId = e.target.value
@@ -49,6 +44,11 @@ function SellForm({ products, paymentMethods }: Props) {
 
 	/// Flags
 	const isProductIdUndefined = sellForm.productId === undefined
+
+	/// Effects
+	useEffect(() => {
+		paymentMethods && setPaymentMethodId(paymentMethods[0].id)
+	}, [])
 
 	/// Render
 	return (
