@@ -1,10 +1,10 @@
-import { useEffect, useId } from 'react'
+import { useEffect, useId, useRef } from 'react'
 import { Button, Form, InputGroup } from 'react-bootstrap'
 
 import { PaymentMethod } from '../types/payment-methods'
 import { Product } from '../types/products'
 import { useModalParametersStore } from '../store/modal-parameters'
-import { formatNumber } from '../utils/number'
+import { formatNumber, isNumber } from '../utils/number'
 
 interface Props {
 	products: Product[]
@@ -18,12 +18,17 @@ function SellForm({ products, paymentMethods }: Props) {
 		setProductId,
 		decreaseQuantity,
 		increaseQuantity,
+		setAmount,
 		setPaymentMethodId,
 		setAmountCalcDetail,
 	} = useModalParametersStore()
 
+	/// ⚓ Flags
+	const isProductIdUndefined = sellForm.productId === undefined
+
 	/// ⚓ State
 	const defaultProductId = useId()
+	const amountRef = useRef<HTMLInputElement>(null)
 
 	/// ⚓ Handlers
 	const handleProductChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -39,13 +44,33 @@ function SellForm({ products, paymentMethods }: Props) {
 		increaseQuantity()
 	}
 
+	const handleAmountClick = () => {
+		amountRef.current?.select()
+	}
+
+	const handleAmountBlur = () => {
+		if (!amountRef.current) {
+			return
+		}
+
+		if (!isNumber(amountRef.current.value)) {
+			// amountRef.current.value = sellForm.amount
+			return
+		}
+
+		// Format the amount to two decimal places
+		const formattedAmount = parseFloat(amountRef.current.value).toFixed(2)
+		setAmount(formattedAmount)
+	}
+
+	const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setAmount(e.target.value)
+	}
+
 	const handlePaymentMethodChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		const paymentMethodId = e.target.value
 		setPaymentMethodId(paymentMethodId)
 	}
-
-	/// ⚓ Flags
-	const isProductIdUndefined = sellForm.productId === undefined
 
 	/// ⚓ Effects
 	useEffect(() => {
@@ -57,10 +82,10 @@ function SellForm({ products, paymentMethods }: Props) {
 
 		// Amount Calculation Details
 		const selectedProduct = products.find((product) => product.id === sellForm.productId)
-		const message = `S/ ${selectedProduct?.price} x ${sellForm.quantity} = S/ ${formatNumber(
-			selectedProduct?.price! * sellForm.quantity
-		)}`
+		const formattedAmount = formatNumber(selectedProduct?.price! * sellForm.quantity)
+		const message = `S/ ${selectedProduct?.price} x ${sellForm.quantity} = S/ ${formattedAmount}`
 
+		setAmount(formattedAmount)
 		setAmountCalcDetail(message)
 	}, [sellForm.productId, sellForm.quantity])
 
@@ -132,6 +157,12 @@ function SellForm({ products, paymentMethods }: Props) {
 					<Form.Control
 						type='tel'
 						className='text-end'
+						ref={amountRef}
+						disabled={isProductIdUndefined}
+						value={sellForm.amount}
+						onClick={handleAmountClick}
+						onBlur={handleAmountBlur}
+						onChange={handleAmountChange}
 					/>
 				</InputGroup>
 				{!isProductIdUndefined && (
