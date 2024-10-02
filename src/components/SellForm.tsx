@@ -12,7 +12,12 @@ interface Props {
 
 function SellForm({ products, paymentMethods }: Props) {
 	/// Store
-	const { setProductId } = useModalParametersStore()
+	const {
+		state: sellForm,
+		setProductId,
+		decreaseQuantity,
+		increaseQuantity,
+	} = useModalParametersStore()
 
 	/// State
 	const defaultProductId = useId()
@@ -21,6 +26,14 @@ function SellForm({ products, paymentMethods }: Props) {
 	const handleProductChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		const productId = e.target.value
 		setProductId(productId)
+	}
+
+	const handleDecreaseQuantity = () => {
+		decreaseQuantity()
+	}
+
+	const handleIncreaseQuantity = () => {
+		increaseQuantity()
 	}
 
 	/// Render
@@ -61,13 +74,36 @@ function SellForm({ products, paymentMethods }: Props) {
 			>
 				<Form.Label className='mt-2'>Cantidad</Form.Label>
 				<InputGroup className='mb-3'>
-					<Button>-</Button>
+					<Button
+						onClick={handleDecreaseQuantity}
+						disabled={
+							sellForm.productId === undefined || sellForm.quantity <= 1
+						}
+						variant={`${
+							sellForm.productId === undefined || sellForm.quantity <= 1
+								? 'outline-secondary'
+								: 'primary'
+						}`}
+					>
+						-
+					</Button>
 					<Form.Control
 						type='text'
-						className='text-center text-secondary'
-						readOnly
+						value={sellForm.quantity}
+						className={`text-center ${
+							sellForm.productId !== undefined ? 'background-white' : ''
+						}`}
+						disabled
 					></Form.Control>
-					<Button>+</Button>
+					<Button
+						onClick={handleIncreaseQuantity}
+						disabled={sellForm.productId === undefined}
+						variant={`${
+							sellForm.productId === undefined ? 'outline-secondary' : 'primary'
+						}`}
+					>
+						+
+					</Button>
 				</InputGroup>
 			</Form.Group>
 
