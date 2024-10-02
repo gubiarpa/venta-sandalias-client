@@ -5,9 +5,7 @@ import { getSellsWithExternalEntities } from '../services/sells'
 import { Product } from '../types/products'
 import { PaymentMethod } from '../types/payment-methods'
 
-const sellsStaleTime = parseInt(
-	import.meta.env.VITE_SELLS_STALE_TIME ?? '60000' // Default: 1 minute
-)
+const sellsStaleTime = import.meta.env.VITE_SELLS_STALE_TIME
 
 interface Props {
 	products?: Product[]

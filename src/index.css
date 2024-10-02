@@ -42,8 +42,19 @@ td.shorten-string {
 }
 
 .text-loading {
-	font-family: "Caveat", cursive;
-  font-optical-sizing: auto;
-  font-weight: 400;
-  font-style: normal;
+	font-family: 'Caveat', cursive;
+	font-optical-sizing: auto;
+	font-weight: 400;
+	font-style: normal;
+}
+
+.form-control.border-gray:focus {
+	border-top-color: var(--bs-gray-400);
+	border-bottom-color: var(--bs-gray-400);
+	border-left: none;
+	box-shadow: none;
+}
+
+.form-control.background-white {
+	background-color: var(--bs-body-bg);
 }

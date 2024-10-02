@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const baseURL = import.meta.env.VITE_BASE_URL?.toString()
+const baseURL = import.meta.env.VITE_BASE_URL
 
 const apiBase = axios.create({
 	baseURL,
@@ -8,7 +8,7 @@ const apiBase = axios.create({
 		'Content-Type': 'application/json',
 		Accept: 'application/json',
 	},
-	timeout: parseInt(import.meta.env.VITE_TIMEOUT ?? '10000'),
+	timeout: import.meta.env.VITE_TIMEOUT,
 })
 
 export default apiBase

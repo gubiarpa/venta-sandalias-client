@@ -7,9 +7,7 @@ import {
 	getPaymentMethods,
 } from '../services/payment-methods'
 
-const paymentMethodsStaleTime = parseInt(
-	import.meta.env.VITE_PAYMENT_METHODS_STALE_TIME ?? '10000'
-)
+const paymentMethodsStaleTime = import.meta.env.VITE_PAYMENT_METHODS_STALE_TIME
 
 export function usePaymentMethods() {
 	return useQuery({

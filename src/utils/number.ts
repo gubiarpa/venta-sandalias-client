@@ -3,3 +3,7 @@ export function formatNumber(number?: number) {
 
 	return number.toFixed(2)
 }
+
+export function isNumber(str: string) {
+	return !isNaN(Number(str)) && str.trim() !== ''
+}

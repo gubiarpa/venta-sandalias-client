@@ -1,9 +1,10 @@
 import { create } from 'zustand'
 
 export interface ModalParameters {
-	quantity: number
 	productId?: string
-	amount: number
+	quantity: number
+	amount: string
+	amountCalcDetail?: string
 	paymentMethodId?: string
 }
 
@@ -12,15 +13,19 @@ interface ModalParametersState {
 	setProductId: (productId: string) => void
 	decreaseQuantity: (value?: number) => void
 	increaseQuantity: (value?: number) => void
-	setAmount: (value?: number) => void
+	setAmount: (value: string) => void
+	setAmountCalcDetail: (value: string) => void
+	setPaymentMethodId: (paymentMethodId: string) => void
 	reset: () => void
 }
 
+const initialState: ModalParameters = {
+	quantity: 1,
+	amount: '',
+}
+
 export const useModalParametersStore = create<ModalParametersState>((set) => ({
-	state: {
-		quantity: 1,
-		amount: 0,
-	},
+	state: initialState,
 	setProductId: (productId: string) => {
 		set((state) => ({
 			state: {
@@ -45,7 +50,7 @@ export const useModalParametersStore = create<ModalParametersState>((set) => ({
 			},
 		}))
 	},
-	setAmount: (value?: number) => {
+	setAmount: (value: string) => {
 		if (!value) {
 			return
 		}
@@ -57,12 +62,25 @@ export const useModalParametersStore = create<ModalParametersState>((set) => ({
 			},
 		}))
 	},
+	setAmountCalcDetail: (value: string) => {
+		set((state) => ({
+			state: {
+				...state.state,
+				amountCalcDetail: value,
+			},
+		}))
+	},
+	setPaymentMethodId: (paymentMethodId: string) => {
+		set((state) => ({
+			state: {
+				...state.state,
+				paymentMethodId,
+			},
+		}))
+	},
 	reset: () => {
 		set(() => ({
-			state: {
-				quantity: 1,
-				amount: 0,
-			},
+			state: initialState,
 		}))
 	},
 }))
