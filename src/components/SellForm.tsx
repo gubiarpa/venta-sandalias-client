@@ -4,6 +4,7 @@ import { Button, Form, InputGroup } from 'react-bootstrap'
 import { PaymentMethod } from '../types/payment-methods'
 import { Product } from '../types/products'
 import { useModalParametersStore } from '../store/modal-parameters'
+import { formatNumber } from '../utils/number'
 
 interface Props {
 	products: Product[]
@@ -18,6 +19,7 @@ function SellForm({ products, paymentMethods }: Props) {
 		decreaseQuantity,
 		increaseQuantity,
 		setPaymentMethodId,
+		setAmountCalcDetail,
 	} = useModalParametersStore()
 
 	/// ⚓ State
@@ -49,6 +51,18 @@ function SellForm({ products, paymentMethods }: Props) {
 	useEffect(() => {
 		paymentMethods && setPaymentMethodId(paymentMethods[0].id)
 	}, [])
+
+	useEffect(() => {
+		if (isProductIdUndefined) return
+
+		// Amount Calculation Details
+		const selectedProduct = products.find((product) => product.id === sellForm.productId)
+		const message = `S/ ${selectedProduct?.price} x ${sellForm.quantity} = S/ ${formatNumber(
+			selectedProduct?.price! * sellForm.quantity
+		)}`
+
+		setAmountCalcDetail(message)
+	}, [sellForm.productId, sellForm.quantity])
 
 	/// ⚓ Render
 	return (
@@ -122,7 +136,7 @@ function SellForm({ products, paymentMethods }: Props) {
 				</InputGroup>
 				{!isProductIdUndefined && (
 					<div className={'text-end'}>
-						<small className={'text-muted me-3'}></small>
+						<small className={'text-muted me-3'}>{sellForm.amountCalcDetail}</small>
 					</div>
 				)}
 			</Form.Group>

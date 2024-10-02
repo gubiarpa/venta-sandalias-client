@@ -4,6 +4,7 @@ export interface ModalParameters {
 	productId?: string
 	quantity: number
 	amount: string
+	amountCalcDetail?: string
 	paymentMethodId?: string
 }
 
@@ -13,6 +14,7 @@ interface ModalParametersState {
 	decreaseQuantity: (value?: number) => void
 	increaseQuantity: (value?: number) => void
 	setAmount: (value: string) => void
+	setAmountCalcDetail: (value: string) => void
 	setPaymentMethodId: (paymentMethodId: string) => void
 	reset: () => void
 }
@@ -57,6 +59,14 @@ export const useModalParametersStore = create<ModalParametersState>((set) => ({
 			state: {
 				...state.state,
 				amount: value,
+			},
+		}))
+	},
+	setAmountCalcDetail: (value: string) => {
+		set((state) => ({
+			state: {
+				...state.state,
+				amountCalcDetail: value,
 			},
 		}))
 	},
