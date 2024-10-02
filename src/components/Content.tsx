@@ -45,7 +45,7 @@ function Content() {
 			</Modal>
 			<Table sells={sellsQuery.data!} />
 
-			{/* Tracking Form State (DEV only) */}
+			{/* 🍎 Tracking Form State (DEV only) */}
 			{import.meta.env.VITE_TRACKING_SHOW === 'ENABLE' &&
 				import.meta.env.DEV && <Tracking obj={sellForm} />}
 		</>

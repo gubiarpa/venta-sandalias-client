@@ -11,7 +11,7 @@ interface Props {
 }
 
 function SellForm({ products, paymentMethods }: Props) {
-	/// Store
+	/// ⚓ Store
 	const {
 		state: sellForm,
 		setProductId,
@@ -20,10 +20,10 @@ function SellForm({ products, paymentMethods }: Props) {
 		setPaymentMethodId,
 	} = useModalParametersStore()
 
-	/// State
+	/// ⚓ State
 	const defaultProductId = useId()
 
-	/// Handlers
+	/// ⚓ Handlers
 	const handleProductChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
 		const productId = e.target.value
 		setProductId(productId)
@@ -42,18 +42,18 @@ function SellForm({ products, paymentMethods }: Props) {
 		setPaymentMethodId(paymentMethodId)
 	}
 
-	/// Flags
+	/// ⚓ Flags
 	const isProductIdUndefined = sellForm.productId === undefined
 
-	/// Effects
+	/// ⚓ Effects
 	useEffect(() => {
 		paymentMethods && setPaymentMethodId(paymentMethods[0].id)
 	}, [])
 
-	/// Render
+	/// ⚓ Render
 	return (
 		<Form>
-			{/* Product */}
+			{/* 🍎 Product */}
 			<Form.Group
 				className='mb-3'
 				controlId='sellFormProduct'
@@ -80,7 +80,7 @@ function SellForm({ products, paymentMethods }: Props) {
 				</Form.Select>
 			</Form.Group>
 
-			{/* Quantity */}
+			{/* 🍎 Quantity */}
 			<Form.Group
 				className='mb-3'
 				controlId='sellFormQuantity'
@@ -110,7 +110,7 @@ function SellForm({ products, paymentMethods }: Props) {
 				</InputGroup>
 			</Form.Group>
 
-			{/* Amount */}
+			{/* 🍎 Amount */}
 			<Form.Group>
 				<Form.Label className='mt-3'>Monto Total</Form.Label>
 				<InputGroup className='mb-1'>
@@ -128,7 +128,7 @@ function SellForm({ products, paymentMethods }: Props) {
 				</div>
 			</Form.Group>
 
-			{/* Payment Method */}
+			{/* 🍎 Payment Method */}
 			<Form.Group className='mb-3'>
 				<Form.Label className='mt-3'>Método de Pago</Form.Label>
 				<Form.Select
