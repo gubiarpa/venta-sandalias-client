@@ -1,4 +1,4 @@
-import { useId } from 'react'
+import { useEffect, useId } from 'react'
 import { Button, Form, InputGroup } from 'react-bootstrap'
 
 import { PaymentMethod } from '../types/payment-methods'
@@ -17,10 +17,16 @@ function SellForm({ products, paymentMethods }: Props) {
 		setProductId,
 		decreaseQuantity,
 		increaseQuantity,
+		setPaymentMethodId,
 	} = useModalParametersStore()
 
 	/// State
 	const defaultProductId = useId()
+
+	/// Effects
+	useEffect(() => {
+		paymentMethods && setPaymentMethodId(paymentMethods[0].id)
+	}, [])
 
 	/// Handlers
 	const handleProductChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -36,19 +42,26 @@ function SellForm({ products, paymentMethods }: Props) {
 		increaseQuantity()
 	}
 
+	const handlePaymentMethodChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		const paymentMethodId = e.target.value
+		setPaymentMethodId(paymentMethodId)
+	}
+
+	/// Flags
+	const isProductIdUndefined = sellForm.productId === undefined
+
 	/// Render
 	return (
 		<Form>
 			{/* Product */}
 			<Form.Group
 				className='mb-3'
-				controlId='formBasicPassword'
+				controlId='sellFormProduct'
 			>
 				<Form.Label className='mt-2'>Producto</Form.Label>
 				<Form.Select
 					defaultValue={defaultProductId}
 					onChange={handleProductChange}
-					aria-label='Default select example'
 				>
 					<option
 						value={defaultProductId}
@@ -76,31 +89,21 @@ function SellForm({ products, paymentMethods }: Props) {
 				<InputGroup className='mb-3'>
 					<Button
 						onClick={handleDecreaseQuantity}
-						disabled={
-							sellForm.productId === undefined || sellForm.quantity <= 1
-						}
-						variant={`${
-							sellForm.productId === undefined || sellForm.quantity <= 1
-								? 'outline-secondary'
-								: 'primary'
-						}`}
+						disabled={isProductIdUndefined || sellForm.quantity <= 1}
+						variant={`${isProductIdUndefined || sellForm.quantity <= 1 ? 'outline-secondary' : 'primary'}`}
 					>
 						-
 					</Button>
 					<Form.Control
 						type='text'
 						value={sellForm.quantity}
-						className={`text-center ${
-							sellForm.productId !== undefined ? 'background-white' : ''
-						}`}
+						className={`text-center ${sellForm.productId !== undefined ? 'background-white' : ''}`}
 						disabled
 					></Form.Control>
 					<Button
 						onClick={handleIncreaseQuantity}
 						disabled={sellForm.productId === undefined}
-						variant={`${
-							sellForm.productId === undefined ? 'outline-secondary' : 'primary'
-						}`}
+						variant={`${sellForm.productId === undefined ? 'outline-secondary' : 'primary'}`}
 					>
 						+
 					</Button>
@@ -129,8 +132,9 @@ function SellForm({ products, paymentMethods }: Props) {
 			<Form.Group className='mb-3'>
 				<Form.Label className='mt-3'>Método de Pago</Form.Label>
 				<Form.Select
-					aria-label='Default select example'
+					disabled={isProductIdUndefined}
 					defaultValue={paymentMethods && paymentMethods[0].id}
+					onChange={handlePaymentMethodChange}
 				>
 					{paymentMethods.map(({ id, name }) => (
 						<option
