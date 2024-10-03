@@ -36,7 +36,7 @@ function Content() {
 		<>
 			<Modal
 				title='Nueva venta'
-				className='m-3'
+				className='my-3'
 			>
 				<SellForm
 					products={productsQuery.data!}

@@ -11,6 +11,7 @@ export interface ModalParameters {
 interface ModalParametersState {
 	state: ModalParameters
 	setProductId: (productId: string) => void
+	isProductIdUndefined: () => boolean
 	decreaseQuantity: (value?: number) => void
 	increaseQuantity: (value?: number) => void
 	setAmount: (value: string) => void
@@ -24,7 +25,7 @@ const initialState: ModalParameters = {
 	amount: '',
 }
 
-export const useModalParametersStore = create<ModalParametersState>((set) => ({
+export const useModalParametersStore = create<ModalParametersState>((set, get) => ({
 	state: initialState,
 	setProductId: (productId: string) => {
 		set((state) => ({
@@ -34,6 +35,7 @@ export const useModalParametersStore = create<ModalParametersState>((set) => ({
 			},
 		}))
 	},
+	isProductIdUndefined: () => get().state.productId === undefined,
 	decreaseQuantity: (value: number = 1) => {
 		set((state) => ({
 			state: {

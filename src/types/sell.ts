@@ -9,6 +9,14 @@ export interface Sell {
 	paymentMethod: PaymentMethod
 }
 
+export interface SellRequest {
+	_id?: string
+	quantity: number
+	productId: string
+	amount: number
+	paymentMethodId: string
+}
+
 export interface SellResponse {
 	_id: string
 	quantity: number

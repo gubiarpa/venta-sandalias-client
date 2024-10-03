@@ -16,6 +16,7 @@ function SellForm({ products, paymentMethods }: Props) {
 	const {
 		state: sellForm,
 		setProductId,
+		isProductIdUndefined,
 		decreaseQuantity,
 		increaseQuantity,
 		setAmount,
@@ -24,7 +25,7 @@ function SellForm({ products, paymentMethods }: Props) {
 	} = useModalParametersStore()
 
 	/// ⚓ Flags
-	const isProductIdUndefined = sellForm.productId === undefined
+	const isInvalidProduct = isProductIdUndefined()
 
 	/// ⚓ State
 	const defaultProductId = useId()
@@ -78,7 +79,7 @@ function SellForm({ products, paymentMethods }: Props) {
 	}, [])
 
 	useEffect(() => {
-		if (isProductIdUndefined) return
+		if (isInvalidProduct) return
 
 		// Amount Calculation Details
 		const selectedProduct = products.find((product) => product.id === sellForm.productId)
@@ -128,8 +129,8 @@ function SellForm({ products, paymentMethods }: Props) {
 				<InputGroup className='mb-3'>
 					<Button
 						onClick={handleDecreaseQuantity}
-						disabled={isProductIdUndefined || sellForm.quantity <= 1}
-						variant={`${isProductIdUndefined || sellForm.quantity <= 1 ? 'outline-secondary' : 'primary'}`}
+						disabled={isInvalidProduct || sellForm.quantity <= 1}
+						variant={`${isInvalidProduct || sellForm.quantity <= 1 ? 'outline-secondary' : 'primary'}`}
 					>
 						-
 					</Button>
@@ -150,7 +151,7 @@ function SellForm({ products, paymentMethods }: Props) {
 			</Form.Group>
 
 			{/* 🍎 Amount */}
-			<Form.Group className={`mb-md-3 ${isProductIdUndefined ? 'mb-3' : 'mb-1'}`}>
+			<Form.Group className={`mb-md-3 ${isInvalidProduct ? 'mb-3' : 'mb-1'}`}>
 				<Form.Label className='mt-3'>Monto Total</Form.Label>
 				<InputGroup className='mb-1'>
 					<InputGroup.Text>S/</InputGroup.Text>
@@ -158,14 +159,14 @@ function SellForm({ products, paymentMethods }: Props) {
 						type='tel'
 						className='text-end'
 						ref={amountRef}
-						disabled={isProductIdUndefined}
+						disabled={isInvalidProduct}
 						value={sellForm.amount}
 						onClick={handleAmountClick}
 						onBlur={handleAmountBlur}
 						onChange={handleAmountChange}
 					/>
 				</InputGroup>
-				{!isProductIdUndefined && (
+				{!isInvalidProduct && (
 					<div className={'text-end'}>
 						<small className={'text-muted me-3'}>{sellForm.amountCalcDetail}</small>
 					</div>
@@ -176,7 +177,7 @@ function SellForm({ products, paymentMethods }: Props) {
 			<Form.Group className='mb-3'>
 				<Form.Label className='mt-3'>Método de Pago</Form.Label>
 				<Form.Select
-					disabled={isProductIdUndefined}
+					disabled={isInvalidProduct}
 					defaultValue={paymentMethods && paymentMethods[0].id}
 					onChange={handlePaymentMethodChange}
 				>
