@@ -1,8 +1,10 @@
 import { useEffect, useId, useRef } from 'react'
 import { Button, Form, InputGroup } from 'react-bootstrap'
+
 import { PaymentMethod } from '../types/payment-methods'
 import { Product } from '../types/products'
 import { useModalParametersStore } from '../store/modal-parameters'
+import { formatNumber, isNumber } from '../utils/number'
 
 interface Props {
 	products: Product[]
@@ -10,49 +12,100 @@ interface Props {
 }
 
 function SellForm({ products, paymentMethods }: Props) {
+	/// ⚓ Store
 	const {
 		state: sellForm,
+		setProductId,
+		isProductIdUndefined,
 		decreaseQuantity,
 		increaseQuantity,
+		setAmount,
+		setPaymentMethodId,
+		setAmountCalcDetail,
 	} = useModalParametersStore()
 
+	/// ⚓ Flags
+	const isInvalidProduct = isProductIdUndefined()
+
+	/// ⚓ State
 	const defaultProductId = useId()
+	const amountRef = useRef<HTMLInputElement>(null)
 
-	const amountInputRef = useRef<HTMLInputElement>(null)
+	/// ⚓ Handlers
+	const handleProductChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		const productId = e.target.value
+		setProductId(productId)
+	}
 
-	// Loads the amount input with the current amount (default value)
-	useEffect(() => {
-		if (amountInputRef.current) {
-			amountInputRef.current.value = sellForm.amount.toFixed(2)
-		}
-	}, [])
+	const handleDecreaseQuantity = () => {
+		decreaseQuantity()
+	}
+
+	const handleIncreaseQuantity = () => {
+		increaseQuantity()
+	}
+
+	const handleAmountClick = () => {
+		amountRef.current?.select()
+	}
 
 	const handleAmountBlur = () => {
-		if (!amountInputRef.current) {
+		if (!amountRef.current) {
+			return
+		}
+
+		if (!isNumber(amountRef.current.value)) {
+			// amountRef.current.value = sellForm.amount
 			return
 		}
 
 		// Format the amount to two decimal places
-		amountInputRef.current.value = parseFloat(
-			amountInputRef.current.value ?? '0'
-		).toFixed(2)
+		const formattedAmount = parseFloat(amountRef.current.value).toFixed(2)
+		setAmount(formattedAmount)
 	}
 
+	const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setAmount(e.target.value)
+	}
+
+	const handlePaymentMethodChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+		const paymentMethodId = e.target.value
+		setPaymentMethodId(paymentMethodId)
+	}
+
+	/// ⚓ Effects
+	useEffect(() => {
+		paymentMethods && setPaymentMethodId(paymentMethods[0].id)
+	}, [])
+
+	useEffect(() => {
+		if (isInvalidProduct) return
+
+		// Amount Calculation Details
+		const selectedProduct = products.find((product) => product.id === sellForm.productId)
+		const formattedAmount = formatNumber(selectedProduct?.price! * sellForm.quantity)
+		const message = `S/ ${selectedProduct?.price} x ${sellForm.quantity} = S/ ${formattedAmount}`
+
+		setAmount(formattedAmount)
+		setAmountCalcDetail(message)
+	}, [sellForm.productId, sellForm.quantity])
+
+	/// ⚓ Render
 	return (
 		<Form>
-			{/* Product */}
+			{/* 🍎 Product */}
 			<Form.Group
 				className='mb-3'
-				controlId='formBasicPassword'
+				controlId='sellFormProduct'
 			>
 				<Form.Label className='mt-2'>Producto</Form.Label>
 				<Form.Select
-					aria-label='Default select example'
 					defaultValue={defaultProductId}
+					onChange={handleProductChange}
 				>
 					<option
-						disabled
 						value={defaultProductId}
+						disabled
 					>
 						Seleccione un producto
 					</option>
@@ -67,7 +120,7 @@ function SellForm({ products, paymentMethods }: Props) {
 				</Form.Select>
 			</Form.Group>
 
-			{/* Cantidad */}
+			{/* 🍎 Quantity */}
 			<Form.Group
 				className='mb-3'
 				controlId='sellFormQuantity'
@@ -75,61 +128,58 @@ function SellForm({ products, paymentMethods }: Props) {
 				<Form.Label className='mt-2'>Cantidad</Form.Label>
 				<InputGroup className='mb-3'>
 					<Button
-						variant={`${
-							sellForm.quantity <= 1 ? 'outline-secondary' : 'outline-danger'
-						}`}
-						disabled={sellForm.quantity <= 1}
-						onClick={() => {
-							decreaseQuantity()
-						}}
+						onClick={handleDecreaseQuantity}
+						disabled={isInvalidProduct || sellForm.quantity <= 1}
+						variant={`${isInvalidProduct || sellForm.quantity <= 1 ? 'outline-secondary' : 'primary'}`}
 					>
 						-
 					</Button>
 					<Form.Control
 						type='text'
-						className='text-center text-secondary'
 						value={sellForm.quantity}
-						readOnly
+						className={`text-center ${sellForm.productId !== undefined ? 'background-white' : ''}`}
+						disabled
 					></Form.Control>
 					<Button
-						variant='outline-success'
-						onClick={() => {
-							increaseQuantity()
-						}}
+						onClick={handleIncreaseQuantity}
+						disabled={sellForm.productId === undefined}
+						variant={`${sellForm.productId === undefined ? 'outline-secondary' : 'primary'}`}
 					>
 						+
 					</Button>
 				</InputGroup>
 			</Form.Group>
 
-			{/* Amount */}
-			<Form.Group
-				className='mb-3'
-				controlId='formBasicPassword'
-			>
+			{/* 🍎 Amount */}
+			<Form.Group className={`mb-md-3 ${isInvalidProduct ? 'mb-3' : 'mb-1'}`}>
 				<Form.Label className='mt-3'>Monto Total</Form.Label>
-				<InputGroup className='mb-3'>
+				<InputGroup className='mb-1'>
 					<InputGroup.Text>S/</InputGroup.Text>
 					<Form.Control
-						style={{ textAlign: 'right' }}
 						type='tel'
-						onClick={() => amountInputRef.current?.select()}
+						className='text-end'
+						ref={amountRef}
+						disabled={isInvalidProduct}
+						value={sellForm.amount}
+						onClick={handleAmountClick}
 						onBlur={handleAmountBlur}
-						ref={amountInputRef}
+						onChange={handleAmountChange}
 					/>
 				</InputGroup>
+				{!isInvalidProduct && (
+					<div className={'text-end'}>
+						<small className={'text-muted me-3'}>{sellForm.amountCalcDetail}</small>
+					</div>
+				)}
 			</Form.Group>
 
-			{/* Payment Method */}
-			<Form.Group
-				className='mb-3'
-				controlId='formBasicPassword'
-			>
+			{/* 🍎 Payment Method */}
+			<Form.Group className='mb-3'>
 				<Form.Label className='mt-3'>Método de Pago</Form.Label>
 				<Form.Select
-					aria-label='Default select example'
-					// defaultValue={defaultPaymentMethodId}
+					disabled={isInvalidProduct}
 					defaultValue={paymentMethods && paymentMethods[0].id}
+					onChange={handlePaymentMethodChange}
 				>
 					{paymentMethods.map(({ id, name }) => (
 						<option

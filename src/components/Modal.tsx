@@ -1,11 +1,9 @@
 import { ReactNode, useState } from 'react'
-import { Button, Modal as ModalBs } from 'react-bootstrap'
-import {
-	IoBagAddOutline,
-	IoBanOutline,
-	IoCartSharp,
-	IoCheckmarkSharp,
-} from 'react-icons/io5'
+import { Button, Container, Modal as ModalBs } from 'react-bootstrap'
+import { IoBagAddOutline, IoBanOutline, IoCartSharp, IoCheckmarkSharp } from 'react-icons/io5'
+import { useCreateSell } from '../hooks/sells'
+import { useModalParametersStore } from '../store/modal-parameters'
+import { SellRequest } from '../types/sell'
 
 interface Props {
 	title: string
@@ -15,8 +13,14 @@ interface Props {
 
 function Modal({ title, className, children }: Props) {
 	const [show, setShow] = useState(false)
+	const createSellMutation = useCreateSell()
+	const { state: sellForm, isProductIdUndefined, reset } = useModalParametersStore()
+
+	/// ⚓ Flags
+	const isInvalidProduct = isProductIdUndefined()
 
 	const handleClose = () => {
+		reset()
 		setShow(false)
 	}
 
@@ -25,20 +29,29 @@ function Modal({ title, className, children }: Props) {
 	}
 
 	const handleSave = () => {
+		const newSell: SellRequest = {
+			productId: sellForm.productId!,
+			quantity: sellForm.quantity,
+			amount: parseFloat(sellForm.amount),
+			paymentMethodId: sellForm.paymentMethodId!,
+		}
+		createSellMutation.mutate(newSell)
 		handleClose()
 	}
 
 	return (
 		<div className={className}>
 			{/* Button */}
-			<Button
-				variant={'outline-success'}
-				onClick={handleShow}
-				title={title}
-			>
-				<IoBagAddOutline className='me-2 mb-1' />
-				{title}
-			</Button>
+			<Container className='d-flex justify-content-start'>
+				<Button
+					variant={'outline-success'}
+					onClick={handleShow}
+					title={title}
+				>
+					<IoBagAddOutline className='me-2 mb-1' />
+					{title}
+				</Button>
+			</Container>
 
 			{/* Modal */}
 			<ModalBs
@@ -56,15 +69,10 @@ function Modal({ title, className, children }: Props) {
 				<ModalBs.Body>{children}</ModalBs.Body>
 				<ModalBs.Footer>
 					<Button
-						variant='outline-secondary'
-						onClick={handleClose}
-					>
-						<IoBanOutline className='me-2 mb-1' />
-						Cancelar
-					</Button>
-					<Button
-						variant='primary'
+						variant={`${isInvalidProduct ? 'outline-secondary' : 'primary'}`}
+						disabled={isInvalidProduct}
 						onClick={handleSave}
+						className={'w-100'}
 					>
 						<IoCheckmarkSharp className='me-2 mb-1' />
 						Guardar
