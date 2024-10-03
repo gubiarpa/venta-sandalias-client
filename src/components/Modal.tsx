@@ -1,6 +1,6 @@
 import { ReactNode, useState } from 'react'
 import { Button, Container, Modal as ModalBs } from 'react-bootstrap'
-import { IoBagAddOutline, IoBanOutline, IoCartSharp, IoCheckmarkSharp } from 'react-icons/io5'
+import { IoBagAddOutline, IoCartSharp, IoCheckmarkSharp } from 'react-icons/io5'
 import { useCreateSell } from '../hooks/sells'
 import { useModalParametersStore } from '../store/modal-parameters'
 import { SellRequest } from '../types/sell'
