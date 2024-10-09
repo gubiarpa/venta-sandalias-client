@@ -1,32 +1,24 @@
-import { ReactNode, useState } from 'react'
-import { Button, Container, Modal as ModalBs } from 'react-bootstrap'
-import { IoBagAddOutline, IoCartSharp, IoCheckmarkSharp } from 'react-icons/io5'
+import { ReactNode } from 'react'
+import { Button, Modal as ModalBs } from 'react-bootstrap'
+import { IoCartSharp, IoCheckmarkSharp } from 'react-icons/io5'
 import { useCreateSell } from '../hooks/sells'
 import { useModalParametersStore } from '../store/modal-parameters'
 import { SellRequest } from '../types/sell'
 
 interface Props {
+	show: boolean
+	handleClose: () => void
 	title: string
 	className?: string
 	children: ReactNode
 }
 
-function Modal({ title, className, children }: Props) {
-	const [show, setShow] = useState(false)
+function Modal({ show, handleClose, title, children }: Props) {
 	const createSellMutation = useCreateSell()
-	const { state: sellForm, isProductIdUndefined, reset } = useModalParametersStore()
+	const { state: sellForm, isProductIdUndefined } = useModalParametersStore()
 
 	/// ⚓ Flags
 	const isInvalidProduct = isProductIdUndefined()
-
-	const handleClose = () => {
-		reset()
-		setShow(false)
-	}
-
-	const handleShow = () => {
-		setShow(true)
-	}
 
 	const handleSave = () => {
 		const newSell: SellRequest = {
@@ -40,20 +32,7 @@ function Modal({ title, className, children }: Props) {
 	}
 
 	return (
-		<div className={className}>
-			{/* Button */}
-			<Container className='d-flex justify-content-start'>
-				<Button
-					variant={'outline-success'}
-					onClick={handleShow}
-					title={title}
-				>
-					<IoBagAddOutline className='me-2 mb-1' />
-					{title}
-				</Button>
-			</Container>
-
-			{/* Modal */}
+		<>
 			<ModalBs
 				show={show}
 				onHide={handleClose}
@@ -79,7 +58,7 @@ function Modal({ title, className, children }: Props) {
 					</Button>
 				</ModalBs.Footer>
 			</ModalBs>
-		</div>
+		</>
 	)
 }
 

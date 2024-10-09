@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-export interface ModalParameters {
+export interface ModalParametersState {
 	productId?: string
 	quantity: number
 	amount: string
@@ -8,8 +8,11 @@ export interface ModalParameters {
 	paymentMethodId?: string
 }
 
-interface ModalParametersState {
-	state: ModalParameters
+interface ModalParametersStore {
+	state: ModalParametersState
+}
+
+export interface ModalParametersActions {
 	setProductId: (productId: string) => void
 	isProductIdUndefined: () => boolean
 	decreaseQuantity: (value?: number) => void
@@ -20,12 +23,12 @@ interface ModalParametersState {
 	reset: () => void
 }
 
-const initialState: ModalParameters = {
+const initialState: ModalParametersState = {
 	quantity: 1,
 	amount: '',
 }
 
-export const useModalParametersStore = create<ModalParametersState>((set, get) => ({
+export const useModalParametersStore = create<ModalParametersStore & ModalParametersActions>((set, get) => ({
 	state: initialState,
 	setProductId: (productId: string) => {
 		set((state) => ({
